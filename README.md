@@ -25,7 +25,7 @@ Fonction du tiers : Persistance des données (CRUD)
     - Le serveur fourni les utilisateurs ainsi que les tweets au service
     
 #Documentation
-##Troisi�me Tiers (Gestion BDD)
+##Troisième Tiers (Gestion BDD)
 ```java
 	public void saveUser(Croakos user) throws RemoteException ;
 	public Croakos getUser(String name) throws RemoteException ;
@@ -33,7 +33,7 @@ Fonction du tiers : Persistance des données (CRUD)
 	public void saveAllCroaks(ArrayList<Croak> listeCroak) throws RemoteException ;
 	public ArrayList<Croak> getAllCroaks() throws RemoteException ;
 ```
-##Troisi�me Tiers (Controller)
+##Troisième Tiers (Controller)
 ```java
 	public SecondServiceImpl() ;
 	public ArrayList<Croakos> getListeCroakos() ;
