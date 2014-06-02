@@ -1,4 +1,14 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
+package com.sil6.model;
+
+
+import com.sil6.v1.ressources.Croak;
+import com.sil6.v1.ressources.Croakos;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,17 +20,35 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 
 public class ThirdServiceImpl extends Thread implements ThirdService {
 	
-	public static final String PATH_USER = "src/sil6-projet/users/";
-	public static final String PATH_CROAKS = "src/sil6-projet/croaks.txt";
+	public static final String PATH_USER = "data/users/";
+	public static final String PATH_CROAKS = "data/croaks.txt";
 	
 	public ThirdServiceImpl() throws RemoteException {
 		super();
 	}
+        
+        public static void main(String [] args) throws Exception {
+		  Registry registry;
+		
+		  ThirdServiceImpl thirdService = new ThirdServiceImpl();
+		  
+		  ThirdService thirdServiceStub = (ThirdService) UnicastRemoteObject.exportObject(thirdService, 0);
+		  
+		  registry = LocateRegistry.createRegistry(2000);
+		
+		  registry.bind("ThirdService", thirdService);
+
+		  System.out.println("Third service started");
+		  System.in.read();
+	 }
 	
 	/**
 	 * Sauvegarde un utilisateur

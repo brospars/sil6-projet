@@ -1,7 +1,21 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package com.sil6.controller;
+
+import com.sil6.model.ThirdService;
+import com.sil6.v1.ressources.Croakos;
 import java.rmi.Naming;
 import java.rmi.Remote;
 import java.util.ArrayList;
+import java.util.List;
+import javax.ws.rs.Path;
 
+// Set the path, version 1 of API
+@Path("/v1/croakos")
 public class SecondServiceImpl extends Thread implements SecondService, Remote{
 	
 	private ArrayList<Croakos> liste_croakos;
@@ -23,9 +37,12 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
 		croakos = new Croakos("Boris","123456");
 		thirdService.saveUser(croakos);
 		
-		//Recupération des utilisateurs après en avoir créé
+		//RecupÃ©ration des utilisateurs aprÃ¨s en avoir crÃ©Ã©
 		secondService.setListeCroakos(thirdService.getAllUsers());
 		secondService.printUsers();
+                
+                System.out.println("Second service started");
+		System.in.read();
 	}
 
 	public ArrayList<Croakos> getListeCroakos() {
@@ -41,4 +58,12 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
 			System.out.println(i.getNom());
 		}
 	}
+        
+        @Override
+        public List<Croakos> getCroakos() {
+            List<Croakos> croakos = getListeCroakos();
+
+            return croakos;
+        }
 }
+

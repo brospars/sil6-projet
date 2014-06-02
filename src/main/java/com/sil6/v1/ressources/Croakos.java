@@ -1,7 +1,17 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package com.sil6.v1.ressources;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
+import javax.xml.bind.annotation.XmlRootElement;
+ 
+@XmlRootElement
 public class Croakos implements Serializable{
 
 	private static final long serialVersionUID = 8040518096487622839L;
@@ -42,3 +52,4 @@ public class Croakos implements Serializable{
 	
 	
 }
+
