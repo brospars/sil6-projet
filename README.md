@@ -1,9 +1,9 @@
-sil6-projet
+﻿sil6-projet
 ===========
 
 Projet de SIL 6 Twitter-like Java RMI
 
-Description rapide
+#Description Fonctionnel
 
 Service permettant de s’inscrire, de s’abonner à des utilisateurs et d’envoyer des tweets (de la même manière que le service Tweeter).
 
@@ -23,3 +23,21 @@ Fonction du tiers : Persistance des données (CRUD)
     - Le serveur enregistre les utilisateurs
     - Le serveur enregistre les tweets
     - Le serveur fourni les utilisateurs ainsi que les tweets au service
+    
+#Documentation
+##Troisi�me Tiers (Gestion BDD)
+```java
+	public void saveUser(Croakos user) throws RemoteException ;
+	public Croakos getUser(String name) throws RemoteException ;
+	public ArrayList<Croakos> getAllUsers() throws RemoteException ;
+	public void saveAllCroaks(ArrayList<Croak> listeCroak) throws RemoteException ;
+	public ArrayList<Croak> getAllCroaks() throws RemoteException ;
+```
+##Troisi�me Tiers (Controller)
+```java
+	public SecondServiceImpl() ;
+	public ArrayList<Croakos> getListeCroakos() ;
+	public ArrayList<Croakos> getAllUsers() throws RemoteException ;
+	public void setListeCroakos(ArrayList<Croakos> liste_croakos) ;
+	public void printUsers() ;
+```

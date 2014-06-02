@@ -4,6 +4,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 
 public class ServeurThird {
+	@SuppressWarnings("unused")
 	public static void main(String [] args) throws Exception {
 		  Registry registry;
 		

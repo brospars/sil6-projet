@@ -1,5 +1,6 @@
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,6 +15,9 @@ import java.util.ArrayList;
 
 public class ThirdServiceImpl extends Thread implements ThirdService {
 	
+	public static final String PATH_USER = "src/sil6-projet/users/";
+	public static final String PATH_CROAKS = "src/sil6-projet/croaks.txt";
+	
 	public ThirdServiceImpl() throws RemoteException {
 		super();
 	}
@@ -26,7 +30,7 @@ public class ThirdServiceImpl extends Thread implements ThirdService {
 		// Write to disk with FileOutputStream
 		FileOutputStream f_out;
 		try {
-			f_out = new FileOutputStream("src/sil6-projet/"+user.getNom());
+			f_out = new FileOutputStream(PATH_USER+user.getNom());
 			try {
 				ObjectOutputStream obj_out = new ObjectOutputStream (f_out);
 				obj_out.writeObject (user);
@@ -45,7 +49,7 @@ public class ThirdServiceImpl extends Thread implements ThirdService {
 		Croakos user;
 		
 		try(
-		      InputStream file = new FileInputStream("src/sil6-projet/"+name);
+		      InputStream file = new FileInputStream(PATH_USER+name);
 		      InputStream buffer = new BufferedInputStream(file);
 		      ObjectInput input = new ObjectInputStream (buffer);
 		){
@@ -58,6 +62,24 @@ public class ThirdServiceImpl extends Thread implements ThirdService {
 		}
 		return null;	
 	}
+	
+	/**
+	 * Retourne la liste des utilisateurs inscrits
+	 */
+	public ArrayList<Croakos> getAllUsers() throws RemoteException{
+		ArrayList<Croakos> users = new ArrayList<Croakos>();
+		
+		File repertoire = new File(PATH_USER);
+		if(repertoire.exists() && repertoire.list() != null){
+			String [] listFichiers = repertoire.list();
+			
+			for(int i=0;i<listFichiers.length;i++){
+				users.add(getUser(listFichiers[i]));
+			}
+		}
+		return users;
+	}
+	
 
 	/**
 	 * Sauvegarde de la liste des Croaks dans le fichier
@@ -68,7 +90,7 @@ public class ThirdServiceImpl extends Thread implements ThirdService {
 		// Write to disk with FileOutputStream
 		FileOutputStream f_out;
 		try {
-			f_out = new FileOutputStream("src/sil6-projet/croaks.txt");
+			f_out = new FileOutputStream(PATH_CROAKS);
 			try {
 				ObjectOutputStream obj_out = new ObjectOutputStream (f_out);
 				obj_out.writeObject (listeCroak);
@@ -90,7 +112,7 @@ public class ThirdServiceImpl extends Thread implements ThirdService {
 		ArrayList<Croak> listeCroak = new ArrayList<Croak>();
 		
 		try(
-		      InputStream file = new FileInputStream("src/sil6-projet/croaks.txt");
+		      InputStream file = new FileInputStream(PATH_CROAKS);
 		      InputStream buffer = new BufferedInputStream(file);
 		      ObjectInput input = new ObjectInputStream (buffer);
 		){
