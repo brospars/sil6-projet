@@ -1,6 +1,6 @@
-package projet;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Croakos implements Serializable{
 
@@ -8,6 +8,8 @@ public class Croakos implements Serializable{
 	
 	String nom;
 	String mdp;
+	ArrayList<Croakos> followers = new ArrayList<Croakos>();
+	ArrayList<Croakos> following = new ArrayList<Croakos>();
 	
 
 	@Override
