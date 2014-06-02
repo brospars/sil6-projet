@@ -35,9 +35,54 @@ Service permettant de s’inscrire, de s’abonner à des utilisateurs et d’en
 ```
 ###Troisième Tiers (Controller)
 ```java
-	public SecondServiceImpl() ;
+	public SecondServiceImpl() ; //Constructor
 	public ArrayList<Croakos> getListeCroakos() ;
 	public ArrayList<Croakos> getAllUsers() throws RemoteException ;
 	public void setListeCroakos(ArrayList<Croakos> liste_croakos) ;
-	public void printUsers() ;
+	public void printUsers() ; 
 ```
+###Croakos (user class)
+#####Fields :
+```java
+    String nom;
+	String mdp;
+	ArrayList<Croakos> followers = new ArrayList<Croakos>();
+	ArrayList<Croakos> following = new ArrayList<Croakos>();
+```
+#####Methodes :
+```java
+    public Croakos(String nom, String mdp) ;//Constructor
+    public String toString() ;
+    public String getNom() ;
+    public void setNom(String nom) ;
+    public String getMdp() ;
+    public void setMdp(String mdp) ;
+```
+
+###Croak (tweet class)
+#####Fields :
+```java
+    Date date;
+	String message;
+	Croakos auteur;
+```
+#####Methodes :
+```java
+    public Croak(Date date, String message, Croakos auteur) ;
+    public Date getDate() ;
+    public String getMessage() ;
+    public void setMessage(String message) ;
+    public Croakos getAuteur() ;
+    public void setAuteur(Croakos auteur) ;
+```
+
+
+
+
+
+
+
+
+
+
+
