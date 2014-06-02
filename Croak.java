@@ -5,6 +5,13 @@ import java.util.Date;
 
 public class Croak implements Serializable{
 	
+	@Override
+	public String toString() {
+		return "Croak [date=" + date + ", message=" + message + ", auteur="
+				+ auteur + "]";
+	}
+
+
 	private static final long serialVersionUID = -2038300624034387060L;
 	
 	Date date;

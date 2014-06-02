@@ -10,6 +10,11 @@ public class Croakos implements Serializable{
 	String mdp;
 	
 
+	@Override
+	public String toString() {
+		return "Croakos [nom=" + nom + ", mdp=" + mdp + "]";
+	}
+
 	public Croakos(String nom, String mdp) {
 		super();
 		this.nom = nom;
