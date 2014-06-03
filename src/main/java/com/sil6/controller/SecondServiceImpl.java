@@ -8,62 +8,63 @@ package com.sil6.controller;
 
 import com.sil6.model.ThirdService;
 import com.sil6.v1.ressources.Croakos;
+import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 // Set the path, version 1 of API
-@Path("/v1/test")
+@Path("/")
 public class SecondServiceImpl extends Thread implements SecondService, Remote{
 	
-	private ArrayList<Croakos> liste_croakos;
-	
-	public SecondServiceImpl(){
-		liste_croakos = new ArrayList<Croakos>();
-	}
-	
-	public static void main(String args[]) throws Exception {
-		ThirdService thirdService;
-		// Ecoute le port 2000 pour communiquer avec le 3em Tiers
-		thirdService = (ThirdService) Naming.lookup("rmi://localhost:2000/ThirdService");
-		
-		SecondServiceImpl secondService = new SecondServiceImpl();
-		
-		//Creer des utilisateurs test et le sauvegarde
-		Croakos croakos = new Croakos("Benoit","123456");
-		thirdService.saveUser(croakos);
-		croakos = new Croakos("Boris","123456");
-		thirdService.saveUser(croakos);
-		
-		//Recupération des utilisateurs après en avoir créé
-		secondService.setListeCroakos(thirdService.getAllUsers());
-		secondService.printUsers();
-                
-                System.out.println("Second service started");
-		System.in.read();
-	}
+        private ThirdService thirdService = null;
 
-	public ArrayList<Croakos> getListeCroakos() {
-		return liste_croakos;
-	}
-
-	public void setListeCroakos(ArrayList<Croakos> liste_croakos) {
-		this.liste_croakos = liste_croakos;
-	}
-	
-	public void printUsers(){
-		for(Croakos i : this.liste_croakos){
-			System.out.println(i.getNom());
-		}
-	}
+        /* Constructor : connexion with RMI to the third tiers */
+        public SecondServiceImpl() {
+            try {
+                // Ecoute le port 2000 pour communiquer avec le 3em Tiers
+                thirdService = (ThirdService) Naming.lookup("rmi://localhost:2000/ThirdService");
+            } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+                Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         
         @Override
         public List<Croakos> getCroakos() {
-            List<Croakos> croakos = getListeCroakos();
-
-            return croakos;
+            
+            ArrayList<Croakos> liste_croakos = null;
+            
+            if(thirdService != null){
+                try {
+                    liste_croakos = thirdService.getAllUsers();
+                } catch (RemoteException ex) {
+                    Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+            return liste_croakos;
+        }
+        
+        
+        @Override
+        public Croakos getUserByName(@PathParam("name") String name) {
+            Croakos user = null;
+            if(thirdService != null){
+                try {
+                    user = thirdService.getUser(name);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+            return user;
         }
 }
 

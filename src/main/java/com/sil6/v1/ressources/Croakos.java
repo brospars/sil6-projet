@@ -16,17 +16,14 @@ public class Croakos implements Serializable{
 
 	private static final long serialVersionUID = 8040518096487622839L;
 	
-	String nom;
-	String mdp;
-	ArrayList<Croakos> followers = new ArrayList<Croakos>();
-	ArrayList<Croakos> following = new ArrayList<Croakos>();
+	private String nom;
+	private String mdp;
+	private ArrayList<Croakos> followers = new ArrayList<Croakos>();
+	private ArrayList<Croakos> following = new ArrayList<Croakos>();
+
+        public Croakos() {
+        }
 	
-
-	@Override
-	public String toString() {
-		return "Croakos [nom=" + nom + ", mdp=" + mdp + "]";
-	}
-
 	public Croakos(String nom, String mdp) {
 		super();
 		this.nom = nom;
@@ -48,8 +45,26 @@ public class Croakos implements Serializable{
 	public void setMdp(String mdp) {
 		this.mdp = mdp;
 	}
+        
+        public ArrayList<Croakos> getFollowers() {
+            return followers;
+        }
+
+        public void setFollowers(ArrayList<Croakos> followers) {
+            this.followers = followers;
+        }
+
+        public ArrayList<Croakos> getFollowing() {
+            return following;
+        }
+
+        public void setFollowing(ArrayList<Croakos> following) {
+            this.following = following;
+        }
 	
-	
-	
+	@Override
+	public String toString() {
+		return "Croakos [nom=" + nom + ", mdp=" + mdp + "]";
+	}
 }
 

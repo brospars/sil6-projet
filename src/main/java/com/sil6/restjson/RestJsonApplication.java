@@ -14,6 +14,6 @@ import javax.ws.rs.ApplicationPath;
 public class RestJsonApplication extends PackagesResourceConfig {
  
     public RestJsonApplication() {
-        super("com.sil6.restjson.v1.controller");
+        super("com.sil6.controller");
     }
 }

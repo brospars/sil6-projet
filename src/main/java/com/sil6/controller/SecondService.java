@@ -10,12 +10,30 @@ import com.sil6.v1.ressources.Croakos;
 import java.rmi.Remote;
 import java.util.List;
 import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 public interface SecondService extends Remote{
-    // Retourne la liste des utilisateurs en json
+    
+    
+    /**
+     * Retourne la liste d'utilisateur (croakos)
+     * @return 
+     */
     @GET
+    @Path("users")
     @Produces({MediaType.APPLICATION_JSON})
     List<Croakos> getCroakos();
+    
+    /**
+     * Retourne l'utilisateur de nom "name"
+     * @param name
+     * @return 
+     */
+    @GET
+    @Path("user/{name}")
+    @Produces({MediaType.APPLICATION_JSON})
+    Croakos getUserByName(@PathParam("name") String name);
 }
