@@ -36,4 +36,20 @@ public interface SecondService extends Remote{
     @Path("getUser/{name}")
     @Produces({MediaType.APPLICATION_JSON})
     public Croakos getUser(@PathParam("name") String name);
+    
+    //Fonction de connexion (verification que le client existe)
+    //Les login et mdp sont passé en parametre
+    
+    //Inscription (verification que le client n'existe pas deja)
+    //Login et mdp en paremetre
+    
+    //Poste d'un tweet
+    //Message en parametre
+    
+    //Abonnement a un utilisateur (mettre à jour les abonnements etc.. + verifie l'existence)
+    //Nom de l'utilisateur où s'abonner en param
+    
+    //Recuperation de la liste des tweets (les tweets de ses abonnement)
+    //Nom d'utilisateur courrant en parametre
+    
 }
