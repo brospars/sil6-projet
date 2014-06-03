@@ -15,7 +15,7 @@ import java.util.List;
 import javax.ws.rs.Path;
 
 // Set the path, version 1 of API
-@Path("/v1/croakos")
+@Path("/v1/test")
 public class SecondServiceImpl extends Thread implements SecondService, Remote{
 	
 	private ArrayList<Croakos> liste_croakos;
