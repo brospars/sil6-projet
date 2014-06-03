@@ -33,7 +33,7 @@ public interface SecondService extends Remote{
      * @return 
      */
     @GET
-    @Path("user/{name}")
+    @Path("getUser/{name}")
     @Produces({MediaType.APPLICATION_JSON})
-    Croakos getUserByName(@PathParam("name") String name);
+    public Croakos getUser(@PathParam("name") String name);
 }

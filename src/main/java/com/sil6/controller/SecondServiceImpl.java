@@ -17,8 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 // Set the path, version 1 of API
 @Path("/")
@@ -52,10 +55,14 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
             return liste_croakos;
         }
         
-        
+
         @Override
-        public Croakos getUserByName(@PathParam("name") String name) {
+        @GET
+        @Path("getUser/{name}")
+        @Produces({MediaType.APPLICATION_JSON})
+        public Croakos getUser(@PathParam("name") String name) {
             Croakos user = null;
+            System.out.println(name);
             if(thirdService != null){
                 try {
                     user = thirdService.getUser(name);
@@ -63,7 +70,6 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
                     Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            
             return user;
         }
 }
