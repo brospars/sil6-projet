@@ -70,13 +70,13 @@ public class Client1 {
                                 //refreshTimeLine(user.getNom());
                             } catch (Exception ex) {Logger.getLogger(Client1.class.getName()).log(Level.SEVERE, null, ex);}
                             break;
-                        case 2:
+                        case 2: // Poste d'un tweet
                             etat = EtatClient.POST_CROAK;
                             break;
-                        case 3:
+                        case 3: // Abonnement à un utilisateur
                             etat = EtatClient.ABONNEMENT;
                             break;
-                        case 4:
+                        case 4: // Exit
                             etat = EtatClient.SORTIR;
                             break;
                         default:
@@ -94,7 +94,7 @@ public class Client1 {
                     break;
                 default : // Sortie
                     System.out.println("\nfin -- Appuyer sur une touche pour terminer");
-                    sc.nextInt();
+                    sc.next();
                     fin = true;
                     break;
             }
