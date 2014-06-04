@@ -45,7 +45,7 @@ public class ThirdServiceImpl extends Thread implements ThirdService {
 		  registry = LocateRegistry.createRegistry(2000);
 		
 		  registry.bind("ThirdService", thirdService);
-
+                  
 		  System.out.println("Third service started");
 		  System.in.read();
 	 }
@@ -132,6 +132,10 @@ public class ThirdServiceImpl extends Thread implements ThirdService {
 		} catch (FileNotFoundException e) { e.printStackTrace();	}
 		
 	}
+        
+        public void saveCroak(Croak croak) throws RemoteException {
+            
+        }
 	
 	
 	/**

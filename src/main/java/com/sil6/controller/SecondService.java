@@ -6,10 +6,13 @@
 
 package com.sil6.controller;
 
+import com.sil6.v1.ressources.MultiCroakos;
 import com.sil6.v1.ressources.Croak;
 import com.sil6.v1.ressources.CroakList;
 import com.sil6.v1.ressources.Croakos;
 import java.rmi.Remote;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -29,8 +32,8 @@ public interface SecondService extends Remote{
      */
     @GET
     @Path("users")
-    @Produces({MediaType.APPLICATION_JSON})
-    List<Croakos> getCroakos();
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    MultiCroakos getCroakos();
     
     /**
      * Retourne l'utilisateur de nom "name"
@@ -61,11 +64,12 @@ public interface SecondService extends Remote{
      * Poste d'un tweet
      * Message en parametre
      * @Retour boolean
-     
+     */
+    
     @PUT
     @Path("postCroak/{croak}")
     @Consumes(MediaType.APPLICATION_XML)
-    public boolean postCroak (@PathParam("croak") JAXBElement<Croak> croak);*/
+    public boolean postCroak (JAXBElement<Croak> c);
     
     
     /**
@@ -73,9 +77,10 @@ public interface SecondService extends Remote{
      *Nom de l'utilisateur où s'abonner en param + nom de celui qui s'abonne
     */
     @PUT
-    @Path("abonnement/{nameUser}/{nameAbo}")
-    @Consumes("text/plain")
-    public boolean abonnement(@PathParam("nameUser") String nameUser, @PathParam("nameAbo") String nameAbo);
+    @Path("abonnement")
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces("text/plain")
+    public String abonnement(JAXBElement<MultiCroakos> listAbo);
     
     //Recuperation de la liste des tweets (les tweets de ses abonnement)
     //Nom d'utilisateur courrant en parametre

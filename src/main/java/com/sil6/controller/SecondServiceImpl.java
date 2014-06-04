@@ -7,6 +7,7 @@
 package com.sil6.controller;
 
 import com.sil6.model.ThirdService;
+import com.sil6.v1.ressources.MultiCroakos;
 import com.sil6.v1.ressources.Croak;
 import com.sil6.v1.ressources.CroakList;
 import com.sil6.v1.ressources.Croakos;
@@ -15,6 +16,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -44,9 +46,11 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
         }
         
         @Override
-        public List<Croakos> getCroakos() {
+        public MultiCroakos getCroakos() {
             
             ArrayList<Croakos> liste_croakos = null;
+            
+            MultiCroakos allCroakos = new MultiCroakos();
             
             if(thirdService != null){
                 try {
@@ -55,8 +59,9 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
                     Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            allCroakos.liste = liste_croakos;
             
-            return liste_croakos;
+            return allCroakos;
         }
         
 
@@ -124,17 +129,13 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
             
             return res;
         }
-        /*
-        @Override
-        public boolean postCroak(JAXBElement<Croak> croak) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }*/
 
         @Override
-        public boolean abonnement(String nameUser, String nameAbo) {
-
-            Croakos follower = this.getUser(nameUser);
-            Croakos following = this.getUser(nameAbo);
+        public String abonnement(JAXBElement<MultiCroakos> listAbo) {
+            MultiCroakos aboList = listAbo.getValue();
+            
+            Croakos follower = aboList.liste.get(0);
+            Croakos following = aboList.liste.get(1);
             
             if(follower != null && following != null){
                 List<Croakos> followings = follower.getFollowing();
@@ -145,10 +146,20 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
 
                 follower.setFollowing(followings);
                 following.setFollowers(followers);
+                
+                if(thirdService != null){
+                    try {
+                        thirdService.saveUser(follower);
+                        thirdService.saveUser(following);
+                       
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
 
-                return true;
+                return "true";
             }else{
-                return false;
+                return "false";
             }
         }
 
@@ -173,6 +184,13 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
                 }
             }
             return timeLine;
+        }
+
+        @Override
+        public boolean postCroak(JAXBElement<Croak> c) {
+            Croak croak = c.getValue();
+            
+            return false;
         }
 }
 
