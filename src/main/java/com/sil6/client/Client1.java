@@ -7,6 +7,7 @@
 package com.sil6.client;
 
 
+import com.sil6.v1.ressources.MultiCroakos;
 import com.sil6.v1.ressources.Croak;
 import com.sil6.v1.ressources.Croakos;
 import com.sun.jersey.api.client.Client;
@@ -14,6 +15,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -112,7 +114,12 @@ public class Client1 {
                     
                 case ABONNEMENT :
                     //La majeure partie est faite dans la fonction, elle s'occupe de tout
-                    if(abonnement(user.getNom())){  //
+                    if(user != null){
+                        System.out.println(user.getNom());
+                    } else {
+                        System.out.println("YAUNPÉPIN");
+                    }
+                    if(choixAbonnement(user)){  //
                         etat = EtatClient.MENU;
                         
                     }else{
@@ -156,8 +163,10 @@ public class Client1 {
     
     //Propose une liste des Utilisateurs, et la possibilité d'abonnement 
     //Retourne vrai si réussi
-    private static boolean abonnement(String userName) throws Exception {
-        List<Croakos> listCroakos = getAllCroakos();
+    private static boolean choixAbonnement(Croakos follower) throws Exception {
+        MultiCroakos allCroakos = getAllCroakos();
+        List<Croakos> listCroakos = allCroakos.liste;
+        
         int listSize = listCroakos.size();
         String nameFollowing;
         Scanner sc2 = new Scanner(System.in);
@@ -166,19 +175,31 @@ public class Client1 {
         System.out.println("---- Liste des Croakos ------------");
         System.out.println("-----------------------------------");
         System.out.println("---- 0. Retour --------------------"); //Pas implémenté
+        System.out.println("-----------------------------------");
         
         for (int i =0; i<listSize;i++){
             String name = listCroakos.get(i).getNom();
-            System.out.println("----" + i+1 + ". " + name);
+            System.out.println("---- " + (i+1) + ". " + name);
         }
         System.out.println("-----------------------------------");
         System.out.println("(Veuillez entrer le numero du Croakos auquel vous souhaitez vous abonner)");
         
         int choice = sc2.nextInt();
         
-        if(choice<listSize){
-            nameFollowing = listCroakos.get(choice).getNom();
-             if(service.path("abonnement/" + userName + "/" + nameFollowing).get(boolean.class)){  // Appel au 2eme Tiers
+        if(choice<=listSize){   // s'il fait le bon choix on l'abonne
+            
+            Croakos following = listCroakos.get(choice-1);
+            nameFollowing = following.getNom();
+            
+            //On défini l'objet qui comporte le follower et le followé
+            MultiCroakos aboList = new MultiCroakos();
+            
+            System.out.println("f"+follower.getNom());
+           
+            aboList.liste.add(follower);
+            aboList.liste.add(following);
+            
+             if(abonnement(aboList).equals("true")){  // Appel au 2eme Tiers
                  System.out.println("Enregistrement réussi, vous suivez désormais" + nameFollowing);
              }
              return true;
@@ -188,15 +209,22 @@ public class Client1 {
         }
     }
     
+    //Abonnement
+    private static String abonnement(MultiCroakos aboList){
+       
+        return service.path("abonnement/").put(String.class,aboList);
+    }
+    
     //poste un Croak -> retourne vrai si réussi
     private static boolean postCroak(Croak croak) throws Exception {
 
         return service.path("postCroak/" + croak).get(boolean.class);
     }
+    
     //Récupère la liste des Croakos
-    private static List<Croakos> getAllCroakos() throws Exception {
+    private static MultiCroakos getAllCroakos() throws Exception {
 
-        return service.path("users/").get(List.class);
+        return service.path("users/").get(MultiCroakos.class);
     }
     
     
@@ -206,6 +234,6 @@ public class Client1 {
     }
     
     private static URI getBaseURI() {
-      return UriBuilder.fromUri("http://localhost:8080/Croaker").build();
+      return UriBuilder.fromUri("http://localhost:8080/Croaker42").build();
     }
 }
