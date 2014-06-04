@@ -59,11 +59,11 @@ public interface SecondService extends Remote{
      * Poste d'un tweet
      * Message en parametre
      * @Retour boolean
-     */
+     
     @PUT
     @Path("postCroak/{croak}")
     @Consumes(MediaType.APPLICATION_XML)
-    public boolean postCroak (@PathParam("croak") JAXBElement<Croak> croak);
+    public boolean postCroak (@PathParam("croak") JAXBElement<Croak> croak);*/
     
     
     /**

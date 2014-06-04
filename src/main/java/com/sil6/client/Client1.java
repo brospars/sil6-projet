@@ -51,14 +51,14 @@ public class Client1 {
                 case CONNEXION : // L'utilisateur vient d'arriver et doit se connecter
                     System.out.println("\nConnexion :\nRentrer votre pseudo utilisateur :");
                     String pseudo = sc.nextLine();
-                    System.out.println("\nmor de passe de "+pseudo+" :");
+                    System.out.println("\nMot de passe de "+pseudo+" :");
                     String mdp = sc.nextLine();
                     
                     try { //Connexion
                         user = connexion(pseudo,mdp);
                     } catch (Exception ex) {Logger.getLogger(Client1.class.getName()).log(Level.SEVERE, null, ex);}
                     
-                    if(user != null){
+                    if(user.getNom() != null){
                         System.out.println("\nConnexion réussi ! bienvenue "+user.getNom()+"\n");
                         etat = EtatClient.MENU;
                     }else{System.out.println("\nConnexion échoué ..\n");}
@@ -123,13 +123,13 @@ public class Client1 {
                     
                 case SORTIR :
                     System.out.println("\nfin -- Appuyer sur une touche pour terminer");
-                    sc.nextInt();
+                    System.in.read();
                     fin = true;
                     break;
                     
                 default : // Sortie
                     System.out.println("\nfin -- Appuyer sur une touche pour terminer");
-                    sc.next();
+                    System.in.read();
                     fin = true;
                     break;
             }
@@ -196,7 +196,7 @@ public class Client1 {
     //Récupère la liste des Croakos
     private static List<Croakos> getAllCroakos() throws Exception {
 
-        return service.path("getUser/").get(List.class);
+        return service.path("users/").get(List.class);
     }
     
     

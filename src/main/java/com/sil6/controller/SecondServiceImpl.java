@@ -82,18 +82,20 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
         @Produces({MediaType.APPLICATION_JSON})
         public Croakos connexion(@PathParam("name") String name, @PathParam("mdp") String mdp) {
             Croakos user = null;
-            System.out.println(name);
+            System.out.println(name+" "+ mdp);
             if(thirdService != null){
                 try {
                     user = thirdService.getUser(name);
-                    if(user.getMdp()!= mdp ){
+                    if(!user.getMdp().equals(mdp) ){
                         user = null;
                     }
                 } catch (RemoteException ex) {
                     Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            
+            if(user == null){ //Si l'utilisateur n'existe pas on lui renvoit un Croakos vide (retour à la connexion)
+                return new Croakos();
+            }
             return user;
         }
 
@@ -116,11 +118,11 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
             }
             return bool;
         }
-
+        /*
         @Override
         public boolean postCroak(JAXBElement<Croak> croak) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        }*/
 
         @Override
         public boolean abonnement(String nameUser, String nameAbo) {
