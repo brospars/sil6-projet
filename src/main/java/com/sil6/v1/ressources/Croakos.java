@@ -8,7 +8,7 @@ package com.sil6.v1.ressources;
 
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
  
 @XmlRootElement
@@ -18,8 +18,8 @@ public class Croakos implements Serializable{
 	
 	private String nom;
 	private String mdp;
-	private ArrayList<Croakos> followers = new ArrayList<Croakos>();
-	private ArrayList<Croakos> following = new ArrayList<Croakos>();
+	private List<Croakos> followers;
+	private List<Croakos> following;
 
         public Croakos() {
         }
@@ -46,19 +46,19 @@ public class Croakos implements Serializable{
 		this.mdp = mdp;
 	}
         
-        public ArrayList<Croakos> getFollowers() {
+        public List<Croakos> getFollowers() {
             return followers;
         }
 
-        public void setFollowers(ArrayList<Croakos> followers) {
+        public void setFollowers(List<Croakos> followers) {
             this.followers = followers;
         }
 
-        public ArrayList<Croakos> getFollowing() {
+        public List<Croakos> getFollowing() {
             return following;
         }
 
-        public void setFollowing(ArrayList<Croakos> following) {
+        public void setFollowing(List<Croakos> following) {
             this.following = following;
         }
 	

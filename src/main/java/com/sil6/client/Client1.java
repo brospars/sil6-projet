@@ -7,12 +7,15 @@
 package com.sil6.client;
 
 
+import com.sil6.v1.ressources.Croak;
 import com.sil6.v1.ressources.Croakos;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import java.net.URI;
+import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +29,7 @@ public class Client1 {
         
     private static WebResource service = null;
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         ClientConfig config = new DefaultClientConfig();
         Client client = Client.create(config);
         service = client.resource(getBaseURI());
@@ -86,12 +89,44 @@ public class Client1 {
                     break;
                     
                 case POST_CROAK :
+                    Croak croak = new Croak();
+                    if(user!= null){
+                        croak.setAuteur(user);
+                        croak.setDate(new Date());
+                    }
+                    else{
+                        etat = EtatClient.CONNEXION;
+                        break;
+                    }
+                    System.out.println("\nCroak :\nVeuillez rentrez votre Croak :");
+                    croak.setMessage(sc.nextLine());
                     
+                    if(postCroak(croak)){
+                        System.out.println("\n Votre Croak à bien été enregistré");
+                        etat = EtatClient.MENU;
+                    }else{
+                        System.out.println("\n une erreur est survenue");
+                        etat = EtatClient.POST_CROAK;
+                    }
                     break;
                     
                 case ABONNEMENT :
+                    //La majeure partie est faite dans la fonction, elle s'occupe de tout
+                    if(abonnement(user.getNom())){  //
+                        etat = EtatClient.MENU;
+                        
+                    }else{
+                        etat = EtatClient.ABONNEMENT;
+                    }
                     
                     break;
+                    
+                case SORTIR :
+                    System.out.println("\nfin -- Appuyer sur une touche pour terminer");
+                    sc.nextInt();
+                    fin = true;
+                    break;
+                    
                 default : // Sortie
                     System.out.println("\nfin -- Appuyer sur une touche pour terminer");
                     sc.next();
@@ -113,11 +148,57 @@ public class Client1 {
         System.out.println("(Veuillez entrer le numero de l'action à effectuer)");
     }
     
-    
+    //Tente une connexion, retourne null si échoué
     private static Croakos connexion(String pseudo, String mdp) throws Exception {
-        
-        return service.path("getUser/" + pseudo).get(Croakos.class);
+
+        return service.path("connexion/" + pseudo + "/" + mdp).get(Croakos.class);
     }
+    
+    //Propose une liste des Utilisateurs, et la possibilité d'abonnement 
+    //Retourne vrai si réussi
+    private static boolean abonnement(String userName) throws Exception {
+        List<Croakos> listCroakos = getAllCroakos();
+        int listSize = listCroakos.size();
+        String nameFollowing;
+        Scanner sc2 = new Scanner(System.in);
+        
+        System.out.println("-----------------------------------");
+        System.out.println("---- Liste des Croakos ------------");
+        System.out.println("-----------------------------------");
+        System.out.println("---- 0. Retour --------------------"); //Pas implémenté
+        
+        for (int i =0; i<listSize;i++){
+            String name = listCroakos.get(i).getNom();
+            System.out.println("----" + i+1 + ". " + name);
+        }
+        System.out.println("-----------------------------------");
+        System.out.println("(Veuillez entrer le numero du Croakos auquel vous souhaitez vous abonner)");
+        
+        int choice = sc2.nextInt();
+        
+        if(choice<listSize){
+            nameFollowing = listCroakos.get(choice).getNom();
+             if(service.path("abonnement/" + userName + "/" + nameFollowing).get(boolean.class)){  // Appel au 2eme Tiers
+                 System.out.println("Enregistrement réussi, vous suivez désormais" + nameFollowing);
+             }
+             return true;
+        }else{
+            System.out.println("Votre entrée est incorrecte, Veuillez recommencer");
+            return false;
+        }
+    }
+    
+    //poste un Croak -> retourne vrai si réussi
+    private static boolean postCroak(Croak croak) throws Exception {
+
+        return service.path("postCroak/" + croak).get(boolean.class);
+    }
+    //Récupère la liste des Croakos
+    private static List<Croakos> getAllCroakos() throws Exception {
+
+        return service.path("getUser/").get(List.class);
+    }
+    
     
     /* Type enuméré de l'etat du client */
     public enum EtatClient {

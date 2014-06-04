@@ -25,6 +25,9 @@ public class Croak implements Serializable{
 	String message;
 	Croakos auteur;
 	
+        public Croak(){
+            
+        }
 	
 	public Croak(Date date, String message, Croakos auteur) {
 		super();
