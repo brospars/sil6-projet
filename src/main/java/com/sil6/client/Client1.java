@@ -7,10 +7,10 @@
 package com.sil6.client;
 
 
-import com.sil6.v1.ressources.MultiCroakos;
 import com.sil6.v1.ressources.Croak;
 import com.sil6.v1.ressources.CroakList;
 import com.sil6.v1.ressources.Croakos;
+import com.sil6.v1.ressources.MultiCroakos;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
@@ -111,7 +111,10 @@ public class Client1 {
                         case 3: // Abonnement à un utilisateur
                             etat = EtatClient.ABONNEMENT;
                             break;
-                        case 4: // Exit
+                        case 4: // Consulter liste d'abonnement
+                            etat = EtatClient.ABONNE;
+                            break;
+                        case 5: // Exit
                             etat = EtatClient.SORTIR;
                             break;
                         default:
@@ -143,13 +146,26 @@ public class Client1 {
                     break;
                     
                 case ABONNEMENT :
-                    //La majeure partie est faite dans la fonction, elle s'occupe de tout
+                    //Fonction d'abonnement
                     if(user != null){
                         System.out.println(user.getNom());
                     } else {
                         System.out.println("YAUNPÉPIN");
                     }
                     if(choixAbonnement(user)){  //
+                        etat = EtatClient.MENU;
+                        
+                    }else{
+                        etat = EtatClient.ABONNEMENT;
+                    }
+                    
+                    break;
+                    
+                case ABONNE :
+                    if(user != null){
+                        System.out.println(user.getNom());
+                    }
+                    if(removeAbonnement(user)){  //
                         etat = EtatClient.MENU;
                         
                     }else{
@@ -174,14 +190,15 @@ public class Client1 {
     }
     
     public static void afficherHomeMenu(){
-        System.out.println("-----------------------------------");
-        System.out.println("---- Home Menu --------------------");
-        System.out.println("-----------------------------------");
-        System.out.println("---- 1. Voir Timeline -------------");
-        System.out.println("---- 2. Poster Croak (tweet) ------");
-        System.out.println("---- 3. S'abonner à un Croakos ----");        
-        System.out.println("---- 4. Exit ----------------------");
-        System.out.println("-----------------------------------");
+        System.out.println("------------------------------------");
+        System.out.println("---- Home Menu ---------------------");
+        System.out.println("------------------------------------");
+        System.out.println("---- 1. Voir Timeline --------------");
+        System.out.println("---- 2. Poster Croak (tweet) -------");
+        System.out.println("---- 3. S'abonner à un Croakos -----");
+        System.out.println("---- 4. Se desabonner à un Croakos -");        
+        System.out.println("---- 5. Exit -----------------------");
+        System.out.println("------------------------------------");
         System.out.println("(Veuillez entrer le numero de l'action à effectuer)");
     }
     
@@ -243,10 +260,58 @@ public class Client1 {
         }
     }
     
+    //Propose la liste des abonnement, et la possibilité se desabonner 
+    //Retourne vrai si réussi
+    private static boolean removeAbonnement(Croakos croakos) throws Exception {
+        
+        ArrayList<String> abonnement = croakos.getFollowing();
+        
+        Scanner sc2 = new Scanner(System.in);
+        
+        System.out.println("-----------------------------------");
+        System.out.println("---- Liste des vos abonnements ----");
+        System.out.println("-----------------------------------");
+        System.out.println("---- 0. Retour --------------------"); //Pas implémenté
+        System.out.println("-----------------------------------");
+        
+        for (int i =0; i<abonnement.size();i++){
+            System.out.println("---- " + (i+1) + ". " + abonnement.get(i));
+        }
+        System.out.println("-----------------------------------");
+        System.out.println("(Veuillez entrer le numero du Croakos auquel vous souhaitez vous abonner)");
+        
+        int choice = sc2.nextInt();
+        
+        if(choice<=abonnement.size()){   // s'il fait le bon choix on l'abonne
+            
+            String nameToUnfollow = abonnement.get(choice-1);
+            
+            //On défini l'objet qui comporte le follower et le followé
+            MultiCroakos aboList = new MultiCroakos();
+           
+            aboList.liste.add(croakos);
+            aboList.liste.add(service.path("getUser/" + nameToUnfollow).get(Croakos.class));
+            
+             if(desabonnement(aboList).equals("true")){  // Appel au 2eme Tiers
+                 System.out.println("Enregistrement réussi, vous ne suivez plus " + abonnement.get(choice-1));
+             }
+             return true;
+        }else{
+            System.out.println("Votre entrée est incorrecte, Veuillez recommencer");
+            return false;
+        }
+    }
+    
     //Abonnement
     private static String abonnement(MultiCroakos aboList){
        
         return service.path("abonnement/").put(String.class,aboList);
+    }
+    
+    //Desabonnement
+    private static String desabonnement(MultiCroakos aboList){
+       
+        return service.path("desabonnement/").put(String.class,aboList);
     }
     
     //poste un Croak -> retourne vrai si réussi
@@ -269,7 +334,7 @@ public class Client1 {
     
     /* Type enuméré de l'etat du client */
     public enum EtatClient {
-	INSCRIPTION,CONNEXION,MENU,POST_CROAK,ABONNEMENT, SORTIR;
+	INSCRIPTION,CONNEXION,MENU,POST_CROAK,ABONNEMENT, ABONNE, SORTIR;
     }
     
     private static URI getBaseURI() {

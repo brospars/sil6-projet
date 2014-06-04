@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.sil6.controller;
 
 import com.sil6.model.ThirdService;
@@ -29,168 +28,198 @@ import javax.xml.bind.JAXBElement;
 
 // Set the path, version 1 of API
 @Path("/")
-public class SecondServiceImpl extends Thread implements SecondService, Remote{
-	
-        private ThirdService thirdService = null;
-        
+public class SecondServiceImpl extends Thread implements SecondService, Remote {
 
-        /* Constructor : connexion with RMI to the third tiers */
-        public SecondServiceImpl() {
+    private ThirdService thirdService = null;
+
+
+    /* Constructor : connexion with RMI to the third tiers */
+    public SecondServiceImpl() {
+        try {
+            // Ecoute le port 2000 pour communiquer avec le 3em Tiers
+            thirdService = (ThirdService) Naming.lookup("rmi://localhost:2000/ThirdService");
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+            Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public MultiCroakos getCroakos() {
+
+        ArrayList<Croakos> liste_croakos = null;
+
+        MultiCroakos allCroakos = new MultiCroakos();
+
+        if (thirdService != null) {
             try {
-                // Ecoute le port 2000 pour communiquer avec le 3em Tiers
-                thirdService = (ThirdService) Naming.lookup("rmi://localhost:2000/ThirdService");
-            } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+                liste_croakos = thirdService.getAllUsers();
+            } catch (RemoteException ex) {
                 Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        @Override
-        public MultiCroakos getCroakos() {
-            
-            ArrayList<Croakos> liste_croakos = null;
-            
-            MultiCroakos allCroakos = new MultiCroakos();
-            
-            if(thirdService != null){
-                try {
-                    liste_croakos = thirdService.getAllUsers();
-                } catch (RemoteException ex) {
-                    Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            allCroakos.liste = liste_croakos;
-            
-            return allCroakos;
-        }
-        
+        allCroakos.liste = liste_croakos;
 
-        @Override
-        //@GET
-        //@Path("getUser/{name}")
-        //@Produces({MediaType.APPLICATION_JSON})
-        public Croakos getUser(@PathParam("name") String name) {
-            Croakos user = null;
-            System.out.println(name);
-            if(thirdService != null){
-                try {
-                    user = thirdService.getUser(name);
-                } catch (RemoteException ex) {
-                    Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            return user;
-        }
-        
-        @Override
-        @GET
-        @Path("connexion/{name}/{mdp}")
-        @Produces({MediaType.APPLICATION_JSON})
-        public Croakos connexion(@PathParam("name") String name, @PathParam("mdp") String mdp) {
-            Croakos user = null;
-            System.out.println(name+" "+ mdp);
-            if(thirdService != null){
-                try {
-                    user = thirdService.getUser(name);
-                    if(user!=null && !user.getMdp().equals(mdp) ){
-                        user = null;
-                    }
-                } catch (RemoteException ex) {
-                    Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            if(user == null){ //Si l'utilisateur n'existe pas on lui renvoit un Croakos vide (retour à la connexion)
-                user = new Croakos();
-            }
-            return user;
-        }
+        return allCroakos;
+    }
 
-        @Override
-        public String inscription(JAXBElement<Croakos> croakos) {
-            String res = "false";
-            Croakos new_croakos = croakos.getValue();
+    @Override
+    @GET
+    @Path("getUser/{name}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Croakos getUser(@PathParam("name") String name) {
+        Croakos user = null;
+        System.out.println(name);
+        if (thirdService != null) {
             try {
-                if(thirdService.getUser(new_croakos.getNom()) == null){
-                    if(thirdService != null){
-                        try {
-                            thirdService.saveUser(new_croakos);
-                            res="true";
-                        } catch (RemoteException ex) {
-                            Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                }
-                else{
-                    res = "false"; //Si l'utilisateur existe déjà
+                user = thirdService.getUser(name);
+            } catch (RemoteException ex) {
+                Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return user;
+    }
+
+    @Override
+    @GET
+    @Path("connexion/{name}/{mdp}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Croakos connexion(@PathParam("name") String name, @PathParam("mdp") String mdp) {
+        Croakos user = null;
+        System.out.println(name + " " + mdp);
+        if (thirdService != null) {
+            try {
+                user = thirdService.getUser(name);
+                if (user != null && !user.getMdp().equals(mdp)) {
+                    user = null;
                 }
             } catch (RemoteException ex) {
                 Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-            return res;
         }
+        if (user == null) { //Si l'utilisateur n'existe pas on lui renvoit un Croakos vide (retour à la connexion)
+            user = new Croakos();
+        }
+        return user;
+    }
 
-        @Override
-        public String abonnement(JAXBElement<MultiCroakos> listAbo) {
-            MultiCroakos aboList = listAbo.getValue();
-            
-            Croakos follower = aboList.liste.get(0);
-            Croakos following = aboList.liste.get(1);
-            
-            if(follower != null && following != null){
-                ArrayList<String> followings = follower.getFollowing();
-                ArrayList<String> followers = following.getFollowers();
-
-                followings.add(following.getNom());
-                followers.add(follower.getNom());
-
-                follower.setFollowing(followings);
-                following.setFollowers(followers);
-                
-                if(thirdService != null){
+    @Override
+    public String inscription(JAXBElement<Croakos> croakos) {
+        String res = "false";
+        Croakos new_croakos = croakos.getValue();
+        try {
+            if (thirdService.getUser(new_croakos.getNom()) == null) {
+                if (thirdService != null) {
                     try {
-                        thirdService.saveUser(follower);
-                        thirdService.saveUser(following);
-                       
+                        thirdService.saveUser(new_croakos);
+                        res = "true";
                     } catch (RemoteException ex) {
                         Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-
-                return "true";
-            }else{
-                return "false";
+            } else {
+                res = "false"; //Si l'utilisateur existe déjà
             }
+        } catch (RemoteException ex) {
+            Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        @Override
-        public CroakList getCroaks(String name) {
-            Croakos user = null;
-            CroakList timeLine = new CroakList();
-            if(thirdService != null){
+        return res;
+    }
+
+    @Override
+    public String abonnement(JAXBElement<MultiCroakos> listAbo) {
+        MultiCroakos aboList = listAbo.getValue();
+
+        Croakos follower = aboList.liste.get(0);
+        Croakos following = aboList.liste.get(1);
+
+        if (follower != null && following != null) {
+            ArrayList<String> followings = follower.getFollowing();
+            ArrayList<String> followers = following.getFollowers();
+
+            followings.add(following.getNom());
+            followers.add(follower.getNom());
+
+            follower.setFollowing(followings);
+            following.setFollowers(followers);
+
+            if (thirdService != null) {
                 try {
-                    ArrayList<Croak> allCroaks = thirdService.getAllCroaks();
-                    user = thirdService.getUser(name);
-                    ArrayList<String> following = user.getFollowing();
-                    
-                    for(int i=0;i<allCroaks.size();i++){
-                        //Si le tweet fait parti de ses following alors l'ajouter à la liste de sa timeline
-                        if(following.contains(allCroaks.get(i).getAuteur().getNom())){ 
-                            timeLine.croakList.add( allCroaks.get(i) );
-                        }
-                    }
-                    
+                    thirdService.saveUser(follower);
+                    thirdService.saveUser(following);
+
                 } catch (RemoteException ex) {
                     Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            return timeLine;
-        }
 
-        @Override
-        public boolean postCroak(JAXBElement<Croak> c) {
-            Croak croak = c.getValue();
-            
-            return false;
+            return "true";
+        } else {
+            return "false";
         }
+    }
+
+    @Override
+    public String desabonnement(JAXBElement<MultiCroakos> listAbo) {
+        MultiCroakos aboList = listAbo.getValue();
+
+        Croakos follower = aboList.liste.get(0);
+        Croakos unfollowing = aboList.liste.get(1);
+
+        if (follower != null && unfollowing != null) {
+            ArrayList<String> followings = follower.getFollowing();
+            ArrayList<String> followers = unfollowing.getFollowers();
+
+            followings.remove(unfollowing.getNom());
+            followers.remove(follower.getNom());
+
+            follower.setFollowing(followings);
+            unfollowing.setFollowers(followers);
+
+            if (thirdService != null) {
+                try {
+                    thirdService.saveUser(follower);
+                    thirdService.saveUser(unfollowing);
+
+                } catch (RemoteException ex) {
+                    Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            return "true";
+        } else {
+            return "false";
+        }
+    }
+
+    @Override
+    public CroakList getCroaks(String name) {
+        Croakos user = null;
+        CroakList timeLine = new CroakList();
+        if (thirdService != null) {
+            try {
+                ArrayList<Croak> allCroaks = thirdService.getAllCroaks();
+                user = thirdService.getUser(name);
+                ArrayList<String> following = user.getFollowing();
+
+                for (int i = 0; i < allCroaks.size(); i++) {
+                    //Si le tweet fait parti de ses following alors l'ajouter à la liste de sa timeline
+                    if (following.contains(allCroaks.get(i).getAuteur().getNom())) {
+                        timeLine.croakList.add(allCroaks.get(i));
+                    }
+                }
+
+            } catch (RemoteException ex) {
+                Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return timeLine;
+    }
+
+    @Override
+    public boolean postCroak(JAXBElement<Croak> c) {
+        Croak croak = c.getValue();
+
+        return false;
+    }
 }
-

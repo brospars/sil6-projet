@@ -82,6 +82,17 @@ public interface SecondService extends Remote{
     @Produces("text/plain")
     public String abonnement(JAXBElement<MultiCroakos> listAbo);
     
+    
+    /**
+     *Abonnement a un utilisateur (mettre à jour les abonnements etc.. + verifie l'existence)
+     *Nom de l'utilisateur où s'abonner en param + nom de celui qui s'abonne
+    */
+    @PUT
+    @Path("desabonnement")
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces("text/plain")
+    public String desabonnement(JAXBElement<MultiCroakos> listAbo);
+    
     //Recuperation de la liste des tweets (les tweets de ses abonnement)
     //Nom d'utilisateur courrant en parametre
     @GET
