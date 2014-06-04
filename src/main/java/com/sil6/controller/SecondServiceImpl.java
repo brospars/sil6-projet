@@ -174,7 +174,8 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
                     
                     for(int i=0;i<allCroaks.size();i++){
                         //Si le tweet fait parti de ses following alors l'ajouter à la liste de sa timeline
-                        if(following.contains(allCroaks.get(i).getAuteur().getNom())){ 
+                        String nameCroakos = allCroaks.get(i).getAuteur().getNom();
+                        if((following.contains(nameCroakos)) || (name.equals(nameCroakos)) ){ 
                             timeLine.croakList.add( allCroaks.get(i) );
                         }
                     }
@@ -187,10 +188,22 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
         }
 
         @Override
-        public boolean postCroak(JAXBElement<Croak> c) {
+        public String postCroak(JAXBElement<Croak> c) {
             Croak croak = c.getValue();
-            
-            return false;
+            String retour = "false";
+            if(thirdService != null){
+                try {
+                    ArrayList<Croak> allCroaks = thirdService.getAllCroaks();
+                    allCroaks.add(croak);
+                    System.out.println(croak.getMessage());
+                    thirdService.saveAllCroaks(allCroaks);
+                    retour = "true";
+                    
+                } catch (RemoteException ex) {
+                    Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            return retour;
         }
 }
 

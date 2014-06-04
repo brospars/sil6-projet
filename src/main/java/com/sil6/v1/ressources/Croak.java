@@ -9,7 +9,9 @@ package com.sil6.v1.ressources;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name="Croak")
 public class Croak implements Serializable{
 	
 	@Override

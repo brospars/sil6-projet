@@ -67,9 +67,10 @@ public interface SecondService extends Remote{
      */
     
     @PUT
-    @Path("postCroak/{croak}")
+    @Path("postCroak")
     @Consumes(MediaType.APPLICATION_XML)
-    public boolean postCroak (JAXBElement<Croak> c);
+    @Produces("text/plain")
+    public String postCroak (JAXBElement<Croak> c);
     
     
     /**

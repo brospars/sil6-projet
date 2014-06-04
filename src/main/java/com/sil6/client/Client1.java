@@ -97,8 +97,8 @@ public class Client1 {
                                 System.out.println("---- Timeline : -------------------");
                                 for(int i=0;i<timeline.croakList.size();i++){
                                     System.out.println(
-                                            timeline.croakList.get(i).getDate()+" "
-                                            +timeline.croakList.get(i).getAuteur()+" : "
+                                            timeline.croakList.get(i).getDate()+"  || Auteur : "
+                                            +timeline.croakList.get(i).getAuteur().getNom()+" *--> "
                                             +timeline.croakList.get(i).getMessage()
                                     );
                                 }
@@ -133,7 +133,7 @@ public class Client1 {
                     System.out.println("\nCroak :\nVeuillez rentrez votre Croak :");
                     croak.setMessage(sc.nextLine());
                     
-                    if(postCroak(croak)){
+                    if(postCroak(croak).equals("true")){
                         System.out.println("\n Votre Croak à bien été enregistré");
                         etat = EtatClient.MENU;
                     }else{
@@ -177,8 +177,8 @@ public class Client1 {
         System.out.println("-----------------------------------");
         System.out.println("---- Home Menu --------------------");
         System.out.println("-----------------------------------");
-        System.out.println("---- 1. Voir Timeline -------------");
-        System.out.println("---- 2. Poster Croak (tweet) ------");
+        System.out.println("---- 1. Voir les Croaks -----------");
+        System.out.println("---- 2. Poster un Croak (tweet) ---");
         System.out.println("---- 3. S'abonner à un Croakos ----");        
         System.out.println("---- 4. Exit ----------------------");
         System.out.println("-----------------------------------");
@@ -246,13 +246,13 @@ public class Client1 {
     //Abonnement
     private static String abonnement(MultiCroakos aboList){
        
-        return service.path("abonnement/").put(String.class,aboList);
+        return service.path("abonnement").put(String.class,aboList);
     }
     
     //poste un Croak -> retourne vrai si réussi
-    private static boolean postCroak(Croak croak) throws Exception {
+    private static String postCroak(Croak croak) throws Exception {
 
-        return service.path("postCroak/" + croak).get(boolean.class);
+        return service.path("postCroak").put(String.class, croak);
     }
     
     //Récupère la liste des Croakos
