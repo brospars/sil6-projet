@@ -54,9 +54,10 @@ public interface SecondService extends Remote{
     //Inscription (verification que le client n'existe pas deja)
     //Login et mdp en parametre
     @PUT
-    @Path("inscription/{name}/{mdp}")
-    @Consumes("plain/text")
-    public boolean inscription(@PathParam("name") String name, @PathParam("mdp") String mdp);
+    @Path("inscription")
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces("text/plain")  
+    public String inscription(JAXBElement<Croakos> croakos);
     
     /**
      * Poste d'un tweet

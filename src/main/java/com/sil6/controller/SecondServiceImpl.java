@@ -99,29 +99,34 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
                 }
             }
             if(user == null){ //Si l'utilisateur n'existe pas on lui renvoit un Croakos vide (retour à la connexion)
-                return new Croakos();
+                user = new Croakos();
             }
             return user;
         }
 
         @Override
-        public boolean inscription(String name, String mdp) {
-            boolean bool = false;
-            if(this.getUser(name) == null){
-                Croakos user = new Croakos(name, mdp);
-                if(thirdService != null){
-                    try {
-                        thirdService.saveUser(user);
-                        bool=true;
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        public String inscription(JAXBElement<Croakos> croakos) {
+            String res = "false";
+            Croakos new_croakos = croakos.getValue();
+            try {
+                if(thirdService.getUser(new_croakos.getNom()) == null){
+                    if(thirdService != null){
+                        try {
+                            thirdService.saveUser(new_croakos);
+                            res="true";
+                        } catch (RemoteException ex) {
+                            Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
+                else{
+                    res = "false"; //Si l'utilisateur existe déjà
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            else{
-                bool = false; //Si l'utilisateur existe déjà
-            }
-            return bool;
+            
+            return res;
         }
 
         @Override

@@ -50,6 +50,19 @@ public class Client1 {
             Scanner sc = new Scanner(System.in);
             
             switch(etat){
+                case INSCRIPTION:
+                    System.out.println("-----------------------------------");
+                    System.out.println("---- Inscription ------------------");
+                    System.out.println("\nPseudo ?\n");
+                    String new_pseudo = sc.nextLine();
+                    System.out.println("\nMot de passe ?\n");
+                    String new_mdp = sc.nextLine();
+                    if(inscription(new Croakos(new_pseudo,new_mdp)).equals("true")){
+                        System.out.println("\nInscription réussi ! Bienvenue \n");
+                        etat = EtatClient.CONNEXION;
+                    }else{System.out.println("\nInscription échouée .. \n");}
+                    
+                    break;
                 case CONNEXION : // L'utilisateur vient d'arriver et doit se connecter
                     System.out.println("\nConnexion :\nRentrer votre pseudo utilisateur :");
                     String pseudo = sc.nextLine();
@@ -60,10 +73,16 @@ public class Client1 {
                         user = connexion(pseudo,mdp);
                     } catch (Exception ex) {Logger.getLogger(Client1.class.getName()).log(Level.SEVERE, null, ex);}
                     
+                    
                     if(user.getNom() != null){
                         System.out.println("\nConnexion réussi ! bienvenue "+user.getNom()+"\n");
                         etat = EtatClient.MENU;
-                    }else{System.out.println("\nConnexion échoué ..\n");}
+                    }else{
+                        System.out.println("\nConnexion échoué ..\n");
+                        System.out.println("\nInscription ? (Oui:1/Non:2)\n");
+                        int choix = sc.nextInt();
+                        if(choix==1){etat = EtatClient.INSCRIPTION;}
+                    }
                     
                     break;
                 case MENU :
@@ -128,7 +147,7 @@ public class Client1 {
                     
                     break;
                     
-                case SORTIR :
+                case SORTIR : // Sortie
                     System.out.println("\nfin -- Appuyer sur une touche pour terminer");
                     System.in.read();
                     fin = true;
@@ -159,6 +178,12 @@ public class Client1 {
     private static Croakos connexion(String pseudo, String mdp) throws Exception {
 
         return service.path("connexion/" + pseudo + "/" + mdp).get(Croakos.class);
+    }
+    
+    //Tente une inscription
+    private static String inscription(Croakos croakos) throws Exception {
+
+        return service.path("inscription/").put(String.class,croakos);
     }
     
     //Propose une liste des Utilisateurs, et la possibilité d'abonnement 
@@ -230,7 +255,7 @@ public class Client1 {
     
     /* Type enuméré de l'etat du client */
     public enum EtatClient {
-	CONNEXION,MENU,POST_CROAK,ABONNEMENT, SORTIR;
+	INSCRIPTION,CONNEXION,MENU,POST_CROAK,ABONNEMENT, SORTIR;
     }
     
     private static URI getBaseURI() {
