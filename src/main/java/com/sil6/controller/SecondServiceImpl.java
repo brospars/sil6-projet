@@ -86,7 +86,7 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
             if(thirdService != null){
                 try {
                     user = thirdService.getUser(name);
-                    if(!user.getMdp().equals(mdp) ){
+                    if(user!=null && !user.getMdp().equals(mdp) ){
                         user = null;
                     }
                 } catch (RemoteException ex) {

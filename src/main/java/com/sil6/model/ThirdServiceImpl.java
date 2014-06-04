@@ -75,19 +75,23 @@ public class ThirdServiceImpl extends Thread implements ThirdService {
 	public Croakos getUser(String name) throws RemoteException {
 		
 		Croakos user;
-		
-		try(
-		      InputStream file = new FileInputStream(PATH_USER+name);
-		      InputStream buffer = new BufferedInputStream(file);
-		      ObjectInput input = new ObjectInputStream (buffer);
-		){
-			//deserialize un utilisateur
-			user = (Croakos)input.readObject();
-			return user;
-		}
-		catch(IOException | ClassNotFoundException e){
-			e.printStackTrace();
-		}
+                
+                
+                File fichier = new File(PATH_USER+name);
+		if(fichier.exists()){
+                    try(
+                          InputStream file = new FileInputStream(fichier);
+                          InputStream buffer = new BufferedInputStream(file);
+                          ObjectInput input = new ObjectInputStream (buffer);
+                    ){
+                            //deserialize un utilisateur
+                            user = (Croakos)input.readObject();
+                            return user;
+                    }
+                    catch(IOException | ClassNotFoundException e){
+                            e.printStackTrace();
+                    }
+                }
 		return null;	
 	}
 	
