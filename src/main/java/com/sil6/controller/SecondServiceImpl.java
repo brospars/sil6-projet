@@ -180,7 +180,6 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote {
                 try {
                     thirdService.saveUser(follower);
                     thirdService.saveUser(unfollowing);
-
                 } catch (RemoteException ex) {
                     Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -202,10 +201,11 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote {
                 user = thirdService.getUser(name);
                 ArrayList<String> following = user.getFollowing();
 
-                for (int i = 0; i < allCroaks.size(); i++) {
+                for(int i=0;i<allCroaks.size();i++){
                     //Si le tweet fait parti de ses following alors l'ajouter à la liste de sa timeline
-                    if (following.contains(allCroaks.get(i).getAuteur().getNom())) {
-                        timeLine.croakList.add(allCroaks.get(i));
+                    String nameCroakos = allCroaks.get(i).getAuteur().getNom();
+                    if((following.contains(nameCroakos)) || (name.equals(nameCroakos)) ){ 
+                        timeLine.croakList.add( allCroaks.get(i) );
                     }
                 }
 
@@ -217,9 +217,21 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote {
     }
 
     @Override
-    public boolean postCroak(JAXBElement<Croak> c) {
+    public String postCroak(JAXBElement<Croak> c) {
         Croak croak = c.getValue();
+        String retour = "false";
+        if(thirdService != null){
+            try {
+                ArrayList<Croak> allCroaks = thirdService.getAllCroaks();
+                allCroaks.add(croak);
+                System.out.println(croak.getMessage());
+                thirdService.saveAllCroaks(allCroaks);
+                retour = "true";
 
-        return false;
+            } catch (RemoteException ex) {
+                Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return retour;
     }
 }
