@@ -229,8 +229,6 @@ public class Client1 {
             
             //On défini l'objet qui comporte le follower et le followé
             MultiCroakos aboList = new MultiCroakos();
-            
-            System.out.println("f"+follower.getNom());
            
             aboList.liste.add(follower);
             aboList.liste.add(following);
@@ -275,6 +273,6 @@ public class Client1 {
     }
     
     private static URI getBaseURI() {
-      return UriBuilder.fromUri("http://localhost:8080/Croaker42").build();
+      return UriBuilder.fromUri("http://localhost:8080/Croaker").build();
     }
 }

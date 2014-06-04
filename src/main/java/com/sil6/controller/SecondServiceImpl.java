@@ -16,7 +16,6 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -138,11 +137,11 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
             Croakos following = aboList.liste.get(1);
             
             if(follower != null && following != null){
-                List<Croakos> followings = follower.getFollowing();
-                List<Croakos> followers = following.getFollowers();
+                ArrayList<String> followings = follower.getFollowing();
+                ArrayList<String> followers = following.getFollowers();
 
-                followings.add(following);
-                followers.add(follower);
+                followings.add(following.getNom());
+                followers.add(follower.getNom());
 
                 follower.setFollowing(followings);
                 following.setFollowers(followers);
@@ -171,10 +170,11 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
                 try {
                     ArrayList<Croak> allCroaks = thirdService.getAllCroaks();
                     user = thirdService.getUser(name);
-                    List<Croakos> following = user.getFollowing();
+                    ArrayList<String> following = user.getFollowing();
                     
                     for(int i=0;i<allCroaks.size();i++){
-                        if(following.contains(allCroaks.get(i).getAuteur())){ //Si le tweet fait parti de ses following alors l'ajouter à la liste de sa timeline
+                        //Si le tweet fait parti de ses following alors l'ajouter à la liste de sa timeline
+                        if(following.contains(allCroaks.get(i).getAuteur().getNom())){ 
                             timeLine.croakList.add( allCroaks.get(i) );
                         }
                     }
