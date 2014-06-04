@@ -8,6 +8,7 @@ package com.sil6.controller;
 
 import com.sil6.model.ThirdService;
 import com.sil6.v1.ressources.Croak;
+import com.sil6.v1.ressources.CroakList;
 import com.sil6.v1.ressources.Croakos;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -152,8 +153,26 @@ public class SecondServiceImpl extends Thread implements SecondService, Remote{
         }
 
         @Override
-        public List<Croak> getCroaks(String name) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public CroakList getCroaks(String name) {
+            Croakos user = null;
+            CroakList timeLine = new CroakList();
+            if(thirdService != null){
+                try {
+                    ArrayList<Croak> allCroaks = thirdService.getAllCroaks();
+                    user = thirdService.getUser(name);
+                    List<Croakos> following = user.getFollowing();
+                    
+                    for(int i=0;i<allCroaks.size();i++){
+                        if(following.contains(allCroaks.get(i).getAuteur())){ //Si le tweet fait parti de ses following alors l'ajouter à la liste de sa timeline
+                            timeLine.croakList.add( allCroaks.get(i) );
+                        }
+                    }
+                    
+                } catch (RemoteException ex) {
+                    Logger.getLogger(SecondServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            return timeLine;
         }
 }
 

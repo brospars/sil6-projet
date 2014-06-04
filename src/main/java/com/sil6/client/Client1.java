@@ -8,6 +8,7 @@ package com.sil6.client;
 
 
 import com.sil6.v1.ressources.Croak;
+import com.sil6.v1.ressources.CroakList;
 import com.sil6.v1.ressources.Croakos;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
@@ -89,7 +90,17 @@ public class Client1 {
                     switch(choix){
                         case 1:
                             try { //Refresh la timeline
-                                //refreshTimeLine(user.getNom());
+                                CroakList timeline = getAllCroaks(user.getNom());
+                                System.out.println("\n\n-----------------------------------");
+                                System.out.println("---- Timeline : -------------------");
+                                for(int i=0;i<timeline.croakList.size();i++){
+                                    System.out.println(
+                                            timeline.croakList.get(i).getDate()+" "
+                                            +timeline.croakList.get(i).getAuteur()+" : "
+                                            +timeline.croakList.get(i).getMessage()
+                                    );
+                                }
+                                System.out.println("---- Fin Timeline -----------------\n\n");
                             } catch (Exception ex) {Logger.getLogger(Client1.class.getName()).log(Level.SEVERE, null, ex);}
                             break;
                         case 2: // Poste d'un tweet
@@ -224,6 +235,11 @@ public class Client1 {
         return service.path("users/").get(List.class);
     }
     
+    //Récupère la liste des croaks de la timeline de l'utilisateur
+    private static CroakList getAllCroaks(String userCourant) throws Exception {
+
+        return service.path("getCroaks/"+userCourant).get(CroakList.class);
+    }
     
     /* Type enuméré de l'etat du client */
     public enum EtatClient {

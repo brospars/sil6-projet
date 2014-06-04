@@ -7,6 +7,7 @@
 package com.sil6.controller;
 
 import com.sil6.v1.ressources.Croak;
+import com.sil6.v1.ressources.CroakList;
 import com.sil6.v1.ressources.Croakos;
 import java.rmi.Remote;
 import java.util.List;
@@ -80,6 +81,6 @@ public interface SecondService extends Remote{
     //Nom d'utilisateur courrant en parametre
     @GET
     @Path("getCroaks/{name}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Croak> getCroaks(@PathParam("name") String name);
+    @Produces({MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON})
+    public CroakList getCroaks(@PathParam("name") String name);
 }
