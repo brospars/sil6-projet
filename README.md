@@ -24,57 +24,15 @@ Service permettant de s’inscrire, de s’abonner à des utilisateurs et d’en
     - Le serveur enregistre les tweets
     - Le serveur fourni les utilisateurs ainsi que les tweets au service
     
-#Documentation
-###Troisième Tiers (Gestion BDD)
-```java
-	public void saveUser(Croakos user) throws RemoteException ;
-	public Croakos getUser(String name) throws RemoteException ;
-	public ArrayList<Croakos> getAllUsers() throws RemoteException ;
-	public void saveAllCroaks(ArrayList<Croak> listeCroak) throws RemoteException ;
-	public ArrayList<Croak> getAllCroaks() throws RemoteException ;
-```
-###Troisième Tiers (Controller)
-```java
-	public SecondServiceImpl() ; //Constructor
-	public ArrayList<Croakos> getListeCroakos() ;
-	public ArrayList<Croakos> getAllUsers() throws RemoteException ;
-	public void setListeCroakos(ArrayList<Croakos> liste_croakos) ;
-	public void printUsers() ; 
-```
-###Croakos (user class)
-#####Fields :
-```java
-    String nom;
-	String mdp;
-	ArrayList<Croakos> followers = new ArrayList<Croakos>();
-	ArrayList<Croakos> following = new ArrayList<Croakos>();
-```
-#####Methodes :
-```java
-    public Croakos(String nom, String mdp) ;//Constructor
-    public String toString() ;
-    public String getNom() ;
-    public void setNom(String nom) ;
-    public String getMdp() ;
-    public void setMdp(String mdp) ;
-```
+#Utilisation
+    1. Installer Netbeans (avec tous les plugins inclus)
+    2. Créer un nouveau projet Maven > Web Application
+    3. Importer l’ensemble de l’archive jointe dans le dossier du projet précédemment créé
+    4. Lancer le fichier ThirdServiceImpl (clic-droit sur le fichier > Run File)
+    5. Lancer le projet (clic-droit sur le projet > Run)
+    6. Lancer le client (clic-droit sur le fichier > Run)
 
-###Croak (tweet class)
-#####Fields :
-```java
-    Date date;
-	String message;
-	Croakos auteur;
-```
-#####Methodes :
-```java
-    public Croak(Date date, String message, Croakos auteur) ;
-    public Date getDate() ;
-    public String getMessage() ;
-    public void setMessage(String message) ;
-    public Croakos getAuteur() ;
-    public void setAuteur(Croakos auteur) ;
-```
+
 
 
 

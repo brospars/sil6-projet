@@ -71,7 +71,9 @@ public class Client1 {
                     String mdp = sc.nextLine();
                     
                     try { //Connexion
-                        user = connexion(pseudo,mdp);
+                        if(pseudo != null && mdp != null ){
+                            user = connexion(pseudo,mdp);
+                        }
                     } catch (Exception ex) {Logger.getLogger(Client1.class.getName()).log(Level.SEVERE, null, ex);}
                     
                     
@@ -88,6 +90,10 @@ public class Client1 {
                     break;
                 case MENU :
                     afficherHomeMenu();
+                    while (!sc.hasNextInt()) { // Tant que l'entree n'est pas un int
+                        System.out.println("Vueillez entrer un chiffre svp !");
+                        sc.nextLine();
+                    }
                     int choix = sc.nextInt();
                     switch(choix){
                         case 1:
@@ -134,6 +140,11 @@ public class Client1 {
                         break;
                     }
                     System.out.println("\nCroak :\nVeuillez rentrez votre Croak :");
+                    String message = sc.nextLine();
+                    while(message.length()>140 || message.length()<1){
+                        System.out.println("\nMessage de taille incorrect ("+message.length()+" caractères)");
+                        message = sc.nextLine();
+                    }
                     croak.setMessage(sc.nextLine());
                     
                     if(postCroak(croak).equals("true")){
@@ -180,10 +191,7 @@ public class Client1 {
                     fin = true;
                     break;
                     
-                default : // Sortie
-                    System.out.println("\nfin -- Appuyer sur une touche pour terminer");
-                    System.in.read();
-                    fin = true;
+                default : // Restart menu
                     break;
             }
         }while(!fin);
@@ -219,6 +227,7 @@ public class Client1 {
     //Propose une liste des Utilisateurs, et la possibilité d'abonnement 
     //Retourne vrai si réussi
     private static boolean choixAbonnement(Croakos follower) throws Exception {
+        follower = service.path("getUser/" + follower.getNom()).get(Croakos.class); // On met à jour l'user actuel
         MultiCroakos allCroakos = getAllCroakos();
         List<Croakos> listCroakos = allCroakos.liste;
         
@@ -234,14 +243,21 @@ public class Client1 {
         
         for (int i =0; i<listSize;i++){
             String name = listCroakos.get(i).getNom();
-            System.out.println("---- " + (i+1) + ". " + name);
+            if(!name.equals(follower.getNom())&& !follower.getFollowing().contains(name)){
+                System.out.println("---- " + (i+1) + ". " + name);
+            }
         }
         System.out.println("-----------------------------------");
         System.out.println("(Veuillez entrer le numero du Croakos auquel vous souhaitez vous abonner)");
         
+        while (!sc2.hasNextInt()) { // Tant que le 
+            System.out.println("Vueillez entrer un chiffre svp !");
+            sc2.nextLine();
+        }
         int choice = sc2.nextInt();
         
-        if(choice<=listSize){   // s'il fait le bon choix on l'abonne
+        if(choice == 0){return true;}// On sort si choix 0
+        if(choice>0 && choice<=listSize){   // s'il fait le bon choix on l'abonne
             
             Croakos following = listCroakos.get(choice-1);
             nameFollowing = following.getNom();
@@ -253,7 +269,7 @@ public class Client1 {
             aboList.liste.add(following);
             
              if(abonnement(aboList).equals("true")){  // Appel au 2eme Tiers
-                 System.out.println("Enregistrement réussi, vous suivez désormais" + nameFollowing);
+                 System.out.println("Enregistrement réussi, vous suivez désormais " + nameFollowing);
              }
              return true;
         }else{
@@ -265,7 +281,8 @@ public class Client1 {
     //Propose la liste des abonnement, et la possibilité se desabonner 
     //Retourne vrai si réussi
     private static boolean removeAbonnement(Croakos croakos) throws Exception {
-        
+         // On met à jour l'user actuel
+        croakos = service.path("getUser/" + croakos.getNom()).get(Croakos.class);
         ArrayList<String> abonnement = croakos.getFollowing();
         
         Scanner sc2 = new Scanner(System.in);
@@ -277,14 +294,20 @@ public class Client1 {
         System.out.println("-----------------------------------");
         
         for (int i =0; i<abonnement.size();i++){
-            System.out.println("---- " + (i+1) + ". " + abonnement.get(i));
+            if(!abonnement.get(i).equals(croakos)){
+                System.out.println("---- " + (i+1) + ". " + abonnement.get(i));
+            }
         }
         System.out.println("-----------------------------------");
         System.out.println("(Veuillez entrer le numero du Croakos auquel vous souhaitez vous abonner)");
         
+        while (!sc2.hasNextInt()) { // Tant que le 
+            System.out.println("Vueillez entrer un chiffre svp !");
+            sc2.nextLine();
+        }
         int choice = sc2.nextInt();
-        
-        if(choice<=abonnement.size()){   // s'il fait le bon choix on l'abonne
+        if(choice == 0){return true;}// On sort si choix 0
+        if(choice>0 && choice<=abonnement.size()){   // s'il fait le bon choix on l'abonne
             
             String nameToUnfollow = abonnement.get(choice-1);
             
@@ -318,7 +341,6 @@ public class Client1 {
     
     //poste un Croak -> retourne vrai si réussi
     private static String postCroak(Croak croak) throws Exception {
-
         return service.path("postCroak").put(String.class, croak);
     }
     
